@@ -76,10 +76,11 @@ def clean_raw_policies(raw_policies):
         clean_words.append(word)
     clean_text = " ".join(clean_words)
     remove_unwanted_punctuations_words = []
-    for i,word in enumerate(word_tokenize(clean_text)):
+    tokenize_word = word_tokenize(clean_text)
+    for i,word in enumerate(tokenize_word):
         if "." in word:
             if word == ".":
-                if word_tokenize(clean_text)[i+1].strip()[0] == word_tokenize(clean_text)[i+1].lower()[0]:
+                if tokenize_word[i+1].strip()[0] == tokenize_word[i+1].lower()[0]:
                     word = " "
             else:
                 # Handling abbreviations
