@@ -78,11 +78,17 @@ def clean_raw_policies(raw_policies):
     remove_unwanted_punctuations_words = []
     for i,word in enumerate(word_tokenize(clean_text)):
         if "." in word:
-            if len(word.strip()) > 1:
-                word = remove_punctuation(word)
             if word == ".":
                 if word_tokenize(clean_text)[i+1].strip()[0] == word_tokenize(clean_text)[i+1].lower()[0]:
                     word = " "
+            else:
+                # Handling abbreviations
+                for j, words in enumerate(word.strip().split(".")[1:]):
+                    x = len(word.strip().split(".")[j+1])
+                    if x <= 1:
+                        word = remove_punctuation(word)
+                        break
+            
         remove_unwanted_punctuations_words.append(word.strip())
     clean_text = " ".join(remove_unwanted_punctuations_words)
     punkt_param = PunktParameters()
@@ -94,7 +100,6 @@ def sim_sentences(clean_policy):
     sim_sentences = []
     for X_raw in clean_policy:
         X = text_preprocessing(X_raw)
-        high_sim = 0
         sim_sentence = ""
         for Y in all_privacy:
             
@@ -115,16 +120,16 @@ def sim_sentences(clean_policy):
             # cosine formula 
             for i in range(len(rvector)):
                     c+= l1[i]*l2[i]
-            if float((sum(l1)*sum(l2))**0.5) != 0:
-                cosine = c / float((sum(l1)*sum(l2))**0.5)
-            else:
+            if float((sum(l1)*sum(l2))**0.5) == 0:
                 cosine = 0
+            else:
+                cosine = c / float((sum(l1)*sum(l2))**0.5)
             
-            if cosine > high_sim:
-                high_sim = cosine
-                sim_sentence = X_raw
+            sim_sentence = X_raw
+            if cosine > 0.35:
+                break
                 
-        if high_sim > 0.35:
+        if cosine > 0.35:
             sim_sentences.append(sim_sentence.strip())
     final_sentences = []
     for sim_sentence in sim_sentences:

@@ -8,12 +8,14 @@ def get_classified_lines(lines):
         clean_lines.append(clean_line)
     vectorizer = pickle.load(open("model/vectorizer.pkl", "rb"))
     vectorized_texts = vectorizer.transform(clean_lines)
-    LR =  pickle.load(open("model/logistic_regression.pkl", "rb"))
-    predictions = LR.predict(vectorized_texts) 
+    RFC =  pickle.load(open("model/Random_Forest_Classifier.pkl", "rb"))
+    predictions = RFC.predict(vectorized_texts) 
     data = {"positive":[], "negative":[]}
     for i,line in enumerate(lines):
         if predictions[i] == 0:
-            data["positive"].append(line)
+            if len(line.split(" ")) > 5:
+                data["positive"].append(line)
         else:
-            data["negative"].append(line)
+            if len(line.split(" ")) > 5:
+                data["negative"].append(line)
     return data
