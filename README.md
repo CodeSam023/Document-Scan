@@ -1,6 +1,5 @@
 # Document-Scan
 
-Application that scans the legal document in any website and gives the summary
 
 ### Project Structure
 
